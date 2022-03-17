@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  mysql:
+    image: bitnami/mysql:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db/data:/bitnami/mysql/data
+      - ./db/init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      ALLOW_EMPTY_PASSWORD: 'no'
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
