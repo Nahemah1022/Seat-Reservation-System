@@ -1,5 +1,5 @@
 CREATE TABLE `Course` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `id` varchar(10) NOT NULL,
   `date` DATE NOT NULL DEFAULT (CURRENT_DATE),
   `name` varchar(100) DEFAULT '',
   `classroom` int unsigned DEFAULT '0',
@@ -16,9 +16,11 @@ CREATE TABLE `Student` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `Seat` (
-  `course_id` int unsigned NOT NULL,
+  `course_id` varchar(10) NOT NULL,
   `course_date` DATE NOT NULL,
   `seat_id` int unsigned NOT NULL,
   `reserved_by` varchar(100) NOT NULL,
-  PRIMARY KEY (`course_id`, `course_date`, `seat_id`)
+  PRIMARY KEY (`course_id`, `course_date`, `seat_id`),
+  FOREIGN KEY (`course_id`,`course_date`) REFERENCES `Course`(`id`,`date`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`reserved_by`) REFERENCES `Student`(`id`)ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
