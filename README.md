@@ -27,3 +27,9 @@ $ mysql -h 127.0.0.1 -u root -D master
 pipenv install
 pipenv run uvicorn main:app --reload
 ```
+
+## API Document & Testing
+
+Go to http://127.0.0.1:8000/docs
+
+Then you will be able to test on OPENAPI
