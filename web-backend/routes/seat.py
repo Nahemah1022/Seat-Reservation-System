@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from config.db import conn
-from models.model import seats
+from models.model import t_Seat
 from schemas.schema import Seat
 
 seatRouter = APIRouter()

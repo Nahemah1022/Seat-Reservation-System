@@ -1,19 +1,19 @@
 import datetime
 from fastapi import APIRouter
 from config.db import conn
-from models.model import courses
+from models.model import t_Course
 from schemas.schema import Course
 
 courseRouter = APIRouter()
 
 @courseRouter.get("/getAllCourse")
 def getAllCourse():
-    return conn.execute(courses.select()).fetchall()
+    return conn.execute(t_Course.select()).fetchall()
 
 @courseRouter.post("/getCourse")
 def getCourse(course_id: str, date: datetime.date):
     print(course_id, date)
-    result = conn.execute(courses.select().where(courses.c.id == course_id and courses.c.date == date)).first()
+    result = conn.execute(t_Course.select().where(t_Course.c.id == course_id and t_Course.c.date == date)).first()
     print(result)
     return result
 
@@ -28,4 +28,4 @@ def addCourse(c: Course):
         "seats":c.seats,
         "cols":c.cols,
     }
-    return conn.execute(courses.insert().values(course))
+    return conn.execute(Course.values(course))

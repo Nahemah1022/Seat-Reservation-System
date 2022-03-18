@@ -1,41 +1,32 @@
-from sqlalchemy import Column, Date, ForeignKey, ForeignKeyConstraint, String, text
+from sqlalchemy import Column, Date, ForeignKey, ForeignKeyConstraint, MetaData, String, Table, text
 from sqlalchemy.dialects.mysql import INTEGER
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
-metadata = Base.metadata
+from config.db import meta, engine
 
 
-class Course(Base):
-    __tablename__ = 'Course'
+t_Course = Table(
+    'Course', meta,
+    Column('id', String(10), primary_key=True, nullable=False),
+    Column('date', Date, primary_key=True, nullable=False, server_default=text("(curdate())")),
+    Column('name', String(100), server_default=text("''")),
+    Column('classroom', String(100), server_default=text("''")),
+    Column('seats', INTEGER, server_default=text("'0'")),
+    Column('cols', INTEGER, server_default=text("'0'"))
+)
 
-    id = Column(String(10), primary_key=True, nullable=False)
-    date = Column(Date, primary_key=True, nullable=False, server_default=text("(curdate())"))
-    name = Column(String(100), server_default=text("''"))
-    classroom = Column(String(100), server_default=text("''"))
-    seats = Column(INTEGER, server_default=text("'0'"))
-    cols = Column(INTEGER, server_default=text("'0'"))
+t_Student = Table(
+    'Student', meta,
+    Column('id', String(100), primary_key=True),
+    Column('name', String(100), server_default=text("''")),
+    Column('password', String(100), server_default=text("''"))
+)
 
+t_Seat = Table(
+    'Seat', meta,
+    Column('course_id', String(10), primary_key=True, nullable=False),
+    Column('course_date', Date, primary_key=True, nullable=False),
+    Column('seat_id', INTEGER, primary_key=True, nullable=False),
+    Column('reserved_by', ForeignKey('Student.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True),
+    ForeignKeyConstraint(['course_id', 'course_date'], ['Course.id', 'Course.date'], ondelete='CASCADE', onupdate='CASCADE')
+)
 
-class Student(Base):
-    __tablename__ = 'Student'
-
-    id = Column(String(100), primary_key=True)
-    name = Column(String(100), server_default=text("''"))
-    password = Column(String(100), server_default=text("''"))
-
-
-class Seat(Base):
-    __tablename__ = 'Seat'
-    __table_args__ = (
-        ForeignKeyConstraint(['course_id', 'course_date'], ['Course.id', 'Course.date'], ondelete='CASCADE', onupdate='CASCADE'),
-    )
-
-    course_id = Column(String(10), primary_key=True, nullable=False)
-    course_date = Column(Date, primary_key=True, nullable=False)
-    seat_id = Column(INTEGER, primary_key=True, nullable=False)
-    reserved_by = Column(ForeignKey('Student.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
-
-    course = relationship('Course')
-    Student = relationship('Student')
+meta.create_all(engine)
