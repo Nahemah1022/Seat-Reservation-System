@@ -11,6 +11,7 @@ def getUsers():
 
 @studentRouter.post("/users")
 def createStudent(stu: Student):
+    # TODO: Check register duplicate -> return false
     print(stu)
     user = {
         "id":stu.id,
@@ -19,3 +20,5 @@ def createStudent(stu: Student):
     }
     conn.execute(students.insert().values(user))
     return "success"
+
+#　TODO: /Login

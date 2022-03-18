@@ -8,6 +8,7 @@ courseRouter = APIRouter()
 
 @courseRouter.get("/getAllCourse")
 def getAllCourse():
+    # return data format
     return conn.execute(courses.select()).fetchall()
 
 @courseRouter.post("/getCourse")
@@ -15,6 +16,7 @@ def getCourse(course_id: int, date: datetime.date):
     print(course_id, date)
     result = conn.execute(courses.select().where(courses.c.id == course_id and courses.c.date == date)).first()
     print(result)
+    # TODO: JOIN seat information
     return result
 
 
