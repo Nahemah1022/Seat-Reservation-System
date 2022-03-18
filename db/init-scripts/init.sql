@@ -2,7 +2,7 @@ CREATE TABLE `Course` (
   `id` varchar(10) NOT NULL,
   `date` DATE NOT NULL DEFAULT (CURRENT_DATE),
   `name` varchar(100) DEFAULT '',
-  `classroom` int unsigned DEFAULT '0',
+  `classroom` varchar(100) DEFAULT '',
   `seats` int unsigned DEFAULT '0',
   `cols` int unsigned DEFAULT '0',
   PRIMARY KEY (`id`, `date`)
