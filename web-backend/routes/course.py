@@ -11,7 +11,7 @@ def getAllCourse():
     return conn.execute(courses.select()).fetchall()
 
 @courseRouter.post("/getCourse")
-def getCourse(course_id: int, date: datetime.date):
+def getCourse(course_id: str, date: datetime.date):
     print(course_id, date)
     result = conn.execute(courses.select().where(courses.c.id == course_id and courses.c.date == date)).first()
     print(result)

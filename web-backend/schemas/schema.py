@@ -10,7 +10,7 @@ class Course(BaseModel):
     id: int
     date: datetime.date
     name: str
-    classroom: int
+    classroom: str
     seats: int
     cols: int
 
