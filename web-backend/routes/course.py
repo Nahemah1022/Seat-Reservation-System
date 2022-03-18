@@ -2,7 +2,7 @@ import datetime
 from fastapi import APIRouter
 from config.db import conn
 from models.model import t_Course
-from schemas.schema import Course
+from schemas import courseSchema 
 
 courseRouter = APIRouter()
 
@@ -22,6 +22,6 @@ def getCourse(course_id: str, date: datetime.date):
 
 
 @courseRouter.post("/addCourse")
-def addCourse(c: Course):
+def addCourse(c: courseSchema.dbCourse):
     conn.execute(t_Course.insert().values(c.dict()))
     return "success"
