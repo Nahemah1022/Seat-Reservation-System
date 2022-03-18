@@ -7,7 +7,7 @@ class Student(BaseModel):
     password: str
 
 class Course(BaseModel):
-    id: int
+    id: str
     date: datetime.date
     name: str
     classroom: str

@@ -2,7 +2,6 @@ from sqlalchemy import Column, Date, ForeignKey, ForeignKeyConstraint, MetaData,
 from sqlalchemy.dialects.mysql import INTEGER
 from config.db import meta, engine
 
-
 t_Course = Table(
     'Course', meta,
     Column('id', String(10), primary_key=True, nullable=False),
