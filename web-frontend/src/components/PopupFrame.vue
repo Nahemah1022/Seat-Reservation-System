@@ -1,23 +1,21 @@
 <template>
   <div>
-  <form action="">
-  <div class="sign-up-pop">
-    <slot></slot>
-  
-  </div>
-  </form>
+    <form action="">
+      <div class="sign-up-pop">
+        <slot></slot>
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'PopupFrame',
- 
-}
+  name: "PopupFrame",
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style >
+<style>
 .sign-up-pop {
   margin: auto;
   display: flex;
@@ -29,11 +27,11 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  box-shadow:4px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 5px;
   border-style: solid;
   border-width: 1px;
-  border-color: #C4C4C4;
-  font-family: '微軟正黑體';
+  border-color: #c4c4c4;
+  font-family: "微軟正黑體";
 }
 </style>

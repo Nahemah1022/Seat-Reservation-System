@@ -1,51 +1,45 @@
 <template>
-
   <popup-frame>
     <div class="sign-up-header">
-        <span>登入帳號</span>
+      <span>登入帳號</span>
     </div>
-  
-  <div class="sign-up-content">
-    <table>
-      <tr>
-        <td width='25%'>
-          <label for="account">帳號</label>
-        </td>
-        <td>
-        <input type="text" id="account">
-        </td>
-      </tr>
-      <tr>
-        <td>
-        <label for="password">密碼</label>
-        </td>
-        <td>
-        <input type="password" id="password">
-        </td>
-      </tr>
-      
-    </table>
-    
-  </div>
-  <div class="button-group">
-      <input type="button" value="取消">
-      <input type="submit" value="登入">
+
+    <div class="sign-up-content">
+      <table>
+        <tr>
+          <td width="25%">
+            <label for="account">帳號</label>
+          </td>
+          <td>
+            <input type="text" id="account" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="password">密碼</label>
+          </td>
+          <td>
+            <input type="password" id="password" />
+          </td>
+        </tr>
+      </table>
     </div>
-  
+    <div class="button-group">
+      <input type="button" value="取消" />
+      <input type="submit" value="登入" />
+    </div>
   </popup-frame>
 </template>
 
 <script>
-
-
-import PopupFrame from './PopupFrame.vue'
+import PopupFrame from "./PopupFrame.vue";
 export default {
-  name: 'sign-in-popup',
+  name: "sign-in-popup",
   components: {
     //HelloWorld
-    PopupFrame
-  }
-}
+    PopupFrame,
+  },
+};
 </script>
 
 <style scoped>
@@ -58,7 +52,6 @@ export default {
   margin-top: 60px;
 }
 
-
 .sign-up-pop .sign-up-header {
   display: flex;
   text-align: left;
@@ -66,11 +59,9 @@ export default {
   padding: 1rem;
   border-bottom-style: solid;
   border-bottom-width: 3px;
-  border-bottom-color: #C4C4C4;
+  border-bottom-color: #c4c4c4;
   height: 10%;
 }
-
-
 
 .sign-up-pop .sign-up-content {
   padding: 1rem;
@@ -80,7 +71,7 @@ export default {
   height: 70%;
 }
 
-.sign-up-pop .sign-up-content table{
+.sign-up-pop .sign-up-content table {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
@@ -93,12 +84,10 @@ export default {
 }
 
 .sign-up-pop .sign-up-content table td {
-
   padding: 0.5rem 0 0.5rem 0;
 }
 
 .sign-up-pop .button-group {
-
   display: flex;
   justify-content: flex-end;
   height: 20%;
@@ -121,7 +110,6 @@ export default {
   background-color: rgb(206, 206, 206);
 }
 
-
 .sign-up-pop .button-group input[type="submit"]:hover {
   background-color: #1a82c7;
 }
@@ -134,12 +122,12 @@ export default {
   background-color: #16679c;
 }
 
-.sign-up-pop .button-group input[type="button"]{
+.sign-up-pop .button-group input[type="button"] {
   background-color: white;
 }
 
-.sign-up-pop .button-group input[type="submit"]{
-  background-color: #18A0FB;
+.sign-up-pop .button-group input[type="submit"] {
+  background-color: #18a0fb;
   color: white;
 }
 </style>
