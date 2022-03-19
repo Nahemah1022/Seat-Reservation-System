@@ -17,4 +17,8 @@ def bookSeat(s: seatSchema.dbSeat):
 @seatRouter.post("/cancel")
 def cancelBookedSeat(studentId: str, seatId: int):
     print(studentId, seatId)
+    conn.execute(t_Seat.delete().where(
+        t_Seat.c.reserved_by == studentId,
+        t_Seat.c.seat_id == seatId
+        ))
     return "success"
