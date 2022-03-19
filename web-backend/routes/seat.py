@@ -1,3 +1,5 @@
+import datetime
+from dataclasses import dataclass
 from fastapi import APIRouter
 from config.db import conn
 from models.model import t_Seat
@@ -7,7 +9,6 @@ seatRouter = APIRouter()
 
 @seatRouter.post("/book")
 def bookSeat(s: seatSchema.dbSeat):
-    print(s.seat_id, s.reserved_by)
     # asume that the request is always valid.
     # we don't handle the situation that the user trys to book the reserved seat.
     # if the seat is reserved or unclickable, the user won't access this route.
@@ -15,10 +16,10 @@ def bookSeat(s: seatSchema.dbSeat):
     return "success"
 
 @seatRouter.post("/cancel")
-def cancelBookedSeat(studentId: str, seatId: int):
-    print(studentId, seatId)
+def cancelBookedSeat(s: seatSchema.dbSeat):
+    print(s)
     conn.execute(t_Seat.delete().where(
-        t_Seat.c.reserved_by == studentId,
-        t_Seat.c.seat_id == seatId
+        t_Seat.c.reserved_by == s.reserved_by,
+        t_Seat.c.seat_id == s.seat_id
         ))
     return "success"
