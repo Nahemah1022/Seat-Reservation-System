@@ -9,6 +9,14 @@ seatRouter = APIRouter()
 
 @seatRouter.post("/book")
 def bookSeat(course_id : str, course_date : datetime.date, seat_id : int, reserved_by : str):
+    # can't reserve multiple seats by the same one.
+    record = conn.execute(t_Seat.select().where(
+        t_Seat.c.course_id == course_id,
+        t_Seat.c.course_date == course_date,
+        t_Seat.c.reserved_by == reserved_by,
+    )).all()
+    if len(record) > 0 : 
+        return f'you already reserved the seat no.{record[0][2]}'
     # asume that the request is always valid.
     # we don't handle the situation that the user trys to book the reserved seat.
     # if the seat is reserved or unclickable, the user won't access this route.
