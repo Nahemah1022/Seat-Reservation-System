@@ -1,13 +1,22 @@
 <template>
   <popup-frame>
     <div class="sign-up-header">
-      <span>註冊帳號</span>
+      <span v-if="isSignup">註冊帳號</span>
+      <span v-else>登入帳號</span>
     </div>
 
     <div class="sign-up-content">
       <table>
-        <tr>
+        <tr v-if="isSignup">
           <td width="25%">
+            <label for="name">姓名</label>
+          </td>
+          <td>
+            <input type="text" id="name" />
+          </td>
+        </tr>
+        <tr>
+          <td>
             <label for="account">帳號</label>
           </td>
           <td>
@@ -22,7 +31,7 @@
             <input type="password" id="password" />
           </td>
         </tr>
-        <tr>
+        <tr v-if="isSignup">
           <td>
             <label for="password-twice">確認密碼</label>
           </td>
@@ -34,7 +43,8 @@
     </div>
     <div class="button-group">
       <input type="button" value="取消" />
-      <input type="submit" value="註冊" />
+      <input v-if="isSignup" type="submit" value="註冊" />
+      <input v-else type="submit" value="登入" />
     </div>
   </popup-frame>
 </template>
@@ -43,6 +53,17 @@
 import PopupFrame from "./PopupFrame.vue";
 export default {
   name: "sign-up-popup",
+  props: {
+    isSignup: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      //isSignup: this.isSiignup,
+    };
+  },
   components: {
     //HelloWorld
     PopupFrame,
