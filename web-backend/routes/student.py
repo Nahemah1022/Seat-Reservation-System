@@ -1,18 +1,21 @@
 from email import message
-from fastapi import APIRouter, HTTPException
-from config.db import conn
+from fastapi import APIRouter, HTTPException,Depends
+from sqlalchemy.orm import Session
+from typing import List
+
+from config.db import get_db_session
 from models.model import t_Student
 from schemas import studentSchema
-from typing import List
+
 
 studentRouter = APIRouter()
 
 @studentRouter.get("/users",response_model= List[studentSchema.dbStudent],tags=["Student"])
-def getAllStudent():
+def getAllStudent(conn:Session = Depends(get_db_session)):
     return conn.execute(t_Student.select()).fetchall()
 
 @studentRouter.post("/users/register", response_model= studentSchema.Message,tags=["Student"])
-def createStudent(stu: studentSchema.dbStudent):
+def createStudent(stu: studentSchema.dbStudent,conn:Session = Depends(get_db_session)):
     # search id in db first
     dbStudentData =  conn.execute(t_Student.select().where(t_Student.c.id == stu.id)).first()
     if dbStudentData is not None:
@@ -23,7 +26,7 @@ def createStudent(stu: studentSchema.dbStudent):
         return message
 
 @studentRouter.post("/users/login", response_model= studentSchema.Message,tags=["Student"])
-def loginStudent(user: studentSchema.StudnetLogin):
+def loginStudent(user: studentSchema.StudnetLogin,conn:Session = Depends(get_db_session)):
     studentData =  conn.execute(t_Student.select().where(t_Student.c.id == user.id)).first()
     if studentData is None:
         raise HTTPException(status_code= 400, detail= "Invalid ID/Password")

@@ -1,14 +1,16 @@
 import datetime
 from dataclasses import dataclass
-from fastapi import APIRouter
-from config.db import conn
+from fastapi import APIRouter,Depends,HTTPException
+from sqlalchemy.orm import Session
+
+from config.db import get_db_session
 from models.model import t_Seat
 from schemas import seatSchema 
 
 seatRouter = APIRouter()
 
 @seatRouter.post("/book")
-def bookSeat(course_id : str, course_date : datetime.date, seat_id : int, reserved_by : str):
+def bookSeat(course_id : str, course_date : datetime.date, seat_id : int, reserved_by : str,conn:Session = Depends(get_db_session)):
     # can't reserve multiple seats by the same one.
     record = conn.execute(t_Seat.select().where(
         t_Seat.c.course_id == course_id,
@@ -31,7 +33,7 @@ def bookSeat(course_id : str, course_date : datetime.date, seat_id : int, reserv
     return "success"
 
 @seatRouter.post("/cancel")
-def cancelBookedSeat(course_id : str, course_date : datetime.date, seat_id : int, reserved_by : str):
+def cancelBookedSeat(course_id : str, course_date : datetime.date, seat_id : int, reserved_by : str, conn:Session = Depends(get_db_session)):
     conn.execute(t_Seat.delete().where(
         t_Seat.c.course_id == course_id,
         t_Seat.c.course_date == course_date,

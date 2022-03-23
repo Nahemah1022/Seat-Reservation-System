@@ -1,23 +1,24 @@
 import datetime
 from email import message
 from msilib import schema
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import parse_obj_as
 from typing import List
 from sqlalchemy.sql import select
+from sqlalchemy.orm import Session
 
 from models.model import t_Course, t_Seat,t_Student
-from config.db import conn
+from config.db import get_db_session
 from schemas import courseSchema,seatSchema
 
 courseRouter = APIRouter()
 
 @courseRouter.get("/course/getAllCourse",response_model= List[courseSchema.dbCourse],tags=["Course"])
-def getAllCourse():
+def getAllCourse(conn:Session = Depends(get_db_session)):
     return conn.execute(t_Course.select()).fetchall()
 
 @courseRouter.get("/course/getCourse",response_model= courseSchema.SeatStatusMessage,tags=["Course"])
-def getCourse(course_id: str, date: datetime.date):
+def getCourse(course_id: str, date: datetime.date,conn:Session = Depends(get_db_session)):
 
     dbClassInfo = conn.execute(select(t_Course.c.cols,t_Course.c.seats).where(
         t_Course.c.id == course_id,
@@ -40,6 +41,6 @@ def getCourse(course_id: str, date: datetime.date):
 
 
 @courseRouter.post("/addCourse")
-def addCourse(c: courseSchema.dbCourse):
+def addCourse(c: courseSchema.dbCourse,conn:Session = Depends(get_db_session)):
     conn.execute(t_Course.insert().values(c.dict()))
     return "success"
