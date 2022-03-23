@@ -11,3 +11,6 @@ class reserveName(BaseModel):
     seat_id: int
     reserved_by: str
     name:str
+
+class Message(BaseModel):
+    message: str
