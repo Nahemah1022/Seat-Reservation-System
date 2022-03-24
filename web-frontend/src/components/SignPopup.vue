@@ -52,7 +52,7 @@
 <script>
 import PopupFrame from "./PopupFrame.vue";
 export default {
-  name: "sign-up-popup",
+  name: "SignPopup",
   props: {
     isSignup: {
       type: Boolean,
