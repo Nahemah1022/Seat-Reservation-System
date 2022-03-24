@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="Mask" v-if="isSign == true"></div>
+    <div class="Mask" v-if="this.$store.state.isLogin == true"></div>
     <div class="menu">
       <h2 class="menu-text">Seat Reservaion System</h2>
-      <button @click="Sign" id="login" type="button" class="btn btn-light">
+      <button @click.once="Sign" id="login" type="button" class="btn btn-light">
         登入
       </button>
       <button id="register" type="button" class="btn btn-dark">註冊</button>
@@ -28,7 +28,7 @@
         <div class="seat-text">請選擇課程與日期</div>
       </div>
     </div>
-    <div class="win" v-if="isLogin == true">
+    <div class="win" v-if="this.$store.state.isLogin == true">
       <SignPopup></SignPopup>
     </div>
   </div>
@@ -45,12 +45,11 @@ export default {
     return {
       LessonName: "請選擇課程名稱:",
       LessonTime: "請選擇課程日期:",
-      isLogin: false,
     };
   },
   methods: {
     Sign() {
-      this.isLogin = true;
+      this.$store.commit("setLogin", true);
     },
   },
   components: {
