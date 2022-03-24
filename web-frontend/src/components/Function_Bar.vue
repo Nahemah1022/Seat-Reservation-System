@@ -1,8 +1,11 @@
 <template>
   <div>
+    <div class="Mask" v-if="isSign == true"></div>
     <div class="menu">
       <h2 class="menu-text">Seat Reservaion System</h2>
-      <button id="login" type="button" class="btn btn-light">登入</button>
+      <button @click="Sign" id="login" type="button" class="btn btn-light">
+        登入
+      </button>
       <button id="register" type="button" class="btn btn-dark">註冊</button>
     </div>
     <div class="body">
@@ -25,6 +28,9 @@
         <div class="seat-text">請選擇課程與日期</div>
       </div>
     </div>
+    <div class="win" v-if="isLogin == true">
+      <SignPopup></SignPopup>
+    </div>
   </div>
 </template>
 
@@ -32,27 +38,23 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "jquery";
 import "bootstrap/dist/js/bootstrap.min.js";
+import SignPopup from "./SignPopup.vue";
 export default {
   name: "Function_Bar",
   data() {
     return {
       LessonName: "請選擇課程名稱:",
       LessonTime: "請選擇課程日期:",
+      isLogin: false,
     };
   },
   methods: {
-    goOff() {
-      if (this.destination == "0") {
-        this.$router.go(-1);
-      } else if (this.destination == "reload") {
-        this.reload();
-      } else {
-        this.$router.push({ name: this.destination });
-      }
+    Sign() {
+      this.isLogin = true;
     },
-    goProfile() {
-      this.$router.push("/profile");
-    },
+  },
+  components: {
+    SignPopup,
   },
 };
 </script>
@@ -115,6 +117,15 @@ export default {
     left: 65%;
     color: #ffffff;
   }
+}
+.Mask {
+  position: absolute;
+  z-index: 100;
+  top: 8%;
+  width: 100%;
+  height: 92%;
+  background: #000000;
+  opacity: 0.6;
 }
 
 .body {
@@ -206,5 +217,16 @@ export default {
       color: #555555;
     }
   }
+}
+.win {
+  border: 0px;
+  padding: 0px;
+  position: absolute;
+  width: 45.5%;
+  height: 51%;
+  left: 27.5%;
+  top: 150px;
+  z-index: 600;
+  background-color: white;
 }
 </style>
