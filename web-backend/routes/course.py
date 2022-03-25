@@ -1,4 +1,5 @@
 import datetime
+from secrets import token_urlsafe
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import parse_obj_as
 from typing import List
@@ -11,9 +12,36 @@ from schemas import courseSchema,seatSchema
 
 courseRouter = APIRouter()
 
-@courseRouter.get("/course/getAllCourse",response_model= List[courseSchema.dbCourse],tags=["Course"])
+@courseRouter.get("/course/getAllCourse", tags=["Course"])
 def getAllCourse(conn:Session = Depends(getDBSession)):
-    return conn.execute(t_Course.select()).fetchall()
+    allCourseId = conn.execute(select(t_Course.c.id)).unique().all()
+    print(allCourseId)
+    returnCourseList = []
+    for id in allCourseId:
+        allCourseInfo = conn.execute(select(t_Course.c.id, t_Course.c.date, t_Course.c.name, t_Course.c.classroom).where(
+            t_Course.c.id == id[0]
+        ).order_by(t_Course.c.date)).all()
+
+        firstCourseInfo = allCourseInfo[0]
+        # print(firstCourseInfo)
+        # print(firstCourseInfo, allCourseInfo)
+        dateList = []
+        for course in allCourseInfo:
+            dateList.append(course[1])
+
+        firstCourseInfo = {
+            'id':firstCourseInfo[0],
+            'date':firstCourseInfo[2],
+            'name':firstCourseInfo[3],
+            'date':dateList
+        }
+        
+        returnCourseList.append(firstCourseInfo)
+
+    print(returnCourseList)
+
+    return returnCourseList
+
 
 @courseRouter.get("/course/getCourse",response_model= courseSchema.SeatStatusMessage,tags=["Course"])
 def getCourse(course_id: str, date: datetime.date,conn:Session = Depends(getDBSession)):
