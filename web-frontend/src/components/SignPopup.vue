@@ -12,7 +12,12 @@
             <label for="name">姓名</label>
           </td>
           <td>
-            <input type="text" id="name" />
+            <input
+              type="text"
+              id="name"
+              placeholder="請輸入名字"
+              v-model="Name"
+            />
           </td>
         </tr>
         <tr>
@@ -20,7 +25,13 @@
             <label for="account">帳號</label>
           </td>
           <td>
-            <input type="text" id="account" />
+            <input
+              @click.once="Clear_text"
+              type="text"
+              id="account"
+              placeholder="請輸入帳號"
+              v-model="Account"
+            />
           </td>
         </tr>
         <tr>
@@ -28,7 +39,12 @@
             <label for="password">密碼</label>
           </td>
           <td>
-            <input type="password" id="password" />
+            <input
+              type="password"
+              id="password"
+              placeholder="請輸入密碼"
+              v-model="Password"
+            />
           </td>
         </tr>
         <tr v-if="isSignup">
@@ -36,13 +52,18 @@
             <label for="password-twice">確認密碼</label>
           </td>
           <td>
-            <input type="password" id="password-twice" />
+            <input
+              type="password"
+              id="password-twice"
+              placeholder="請再次輸入密碼"
+              v-model="Password_twice"
+            />
           </td>
         </tr>
       </table>
     </div>
     <div class="button-group">
-      <input type="button" value="取消" />
+      <input @click="Cancel" type="button" value="取消" />
       <input v-if="isSignup" type="submit" value="註冊" />
       <input v-else type="submit" value="登入" />
     </div>
@@ -61,8 +82,16 @@ export default {
   },
   data() {
     return {
-      //isSignup: this.isSiignup,
+      Name: "",
+      Account: "",
+      Password: "",
+      Password_twice: "",
     };
+  },
+  methods: {
+    Cancel() {
+      this.$store.commit("setLogin", false);
+    },
   },
   components: {
     //HelloWorld
@@ -72,24 +101,6 @@ export default {
 </script>
 
 <style scoped>
-.sign-up-pop {
-  margin-left: auto;
-  margin-right: auto;
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  left: 23.26%;
-  right: 23.26%;
-  top: 25.68%;
-  bottom: 25.68%;
-  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #c4c4c4;
-  font-family: "微軟正黑體";
-}
-
 .sign-up-pop .sign-up-header {
   display: flex;
   text-align: left;

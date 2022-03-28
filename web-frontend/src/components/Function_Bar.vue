@@ -1,12 +1,18 @@
 <template>
   <div>
-    <div class="Mask" v-if="this.$store.state.isLogin == true"></div>
+    <transition name="fade">
+      <div class="Mask" v-show="this.$store.state.isLogin == true">
+        <SignPopup class="win" :isSignup="Is_SignUp"></SignPopup>
+      </div>
+    </transition>
     <div class="menu">
       <h2 class="menu-text">Seat Reservaion System</h2>
-      <button @click.once="Sign" id="login" type="button" class="btn btn-light">
+      <button @click="Sign" id="login" type="button" class="btn btn-light">
         登入
       </button>
-      <button id="register" type="button" class="btn btn-dark">註冊</button>
+      <button @click="Sign_up" id="register" type="button" class="btn btn-dark">
+        註冊
+      </button>
     </div>
     <div class="body">
       <div class="option-menu">
@@ -28,9 +34,10 @@
         <div class="seat-text">請選擇課程與日期</div>
       </div>
     </div>
-    <div class="win" v-if="this.$store.state.isLogin == true">
+    <!--<div class="win" v-if="this.$store.state.isLogin == true">
       <SignPopup></SignPopup>
     </div>
+    -->
   </div>
 </template>
 
@@ -45,11 +52,17 @@ export default {
     return {
       LessonName: "請選擇課程名稱:",
       LessonTime: "請選擇課程日期:",
+      Is_SignUp: false,
     };
   },
   methods: {
     Sign() {
       this.$store.commit("setLogin", true);
+      this.Is_SignUp = false;
+    },
+    Sign_up() {
+      this.$store.commit("setLogin", true);
+      this.Is_SignUp = true;
     },
   },
   components: {
@@ -123,8 +136,8 @@ export default {
   top: 8%;
   width: 100%;
   height: 92%;
-  background: #000000;
-  opacity: 0.6;
+  background: rgb(0, 0, 0, 0.6);
+  //opacity: 0.6;
 }
 
 .body {
@@ -218,14 +231,22 @@ export default {
   }
 }
 .win {
-  border: 0px;
-  padding: 0px;
-  position: absolute;
-  width: 45.5%;
-  height: 51%;
-  left: 27.5%;
-  top: 150px;
-  z-index: 600;
   background-color: white;
+  //opacity: 1;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
 }
 </style>
