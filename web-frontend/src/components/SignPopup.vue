@@ -63,12 +63,19 @@
       </table>
     </div>
     <div class="button-group">
+      <span v-if="Is_alarm" style="color: red">{{ Alarm_text }}</span>
       <input @click="Cancel" type="button" value="取消" />
-      <input v-if="isSignup" type="submit" value="註冊" />
-      <input v-else type="submit" value="登入" />
+      <input
+        @click="Commit_signup"
+        v-if="isSignup"
+        type="submit"
+        value="註冊"
+      />
+      <input @click="Commit_signin" v-else type="submit" value="登入" />
     </div>
   </popup-frame>
 </template>
+label
 
 <script>
 import PopupFrame from "./PopupFrame.vue";
@@ -86,11 +93,38 @@ export default {
       Account: "",
       Password: "",
       Password_twice: "",
+      Is_alarm: false,
+      Alarm_text: "tt",
     };
   },
   methods: {
     Cancel() {
       this.$store.commit("setLogin", false);
+    },
+    Commit_signup() {
+      this.Is_alarm = true;
+      if (this.Name == "") {
+        this.Alarm_text = "名字不能為空白！";
+      } else if (this.Account == "") {
+        this.Alarm_text = "帳號不能為空白！";
+      } else if (this.Password == "") {
+        this.Alarm_text = "密碼不能為空白！";
+      } else if (this.Password_twice != this.Password) {
+        this.Alarm_text = "密碼不一致！";
+      } else {
+        this.Is_alarm = false;
+      }
+    },
+    Commit_signin() {
+      if (this.Account == "") {
+        this.Is_alarm = true;
+        this.Alarm_text = "帳號不能為空白！";
+      } else if (this.Password == "") {
+        this.Is_alarm = true;
+        this.Alarm_text = "密碼不能為空白！";
+      } else {
+        this.Is_alarm = false;
+      }
     },
   },
   components: {
