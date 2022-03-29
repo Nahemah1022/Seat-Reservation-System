@@ -12,7 +12,7 @@ from schemas import courseSchema,seatSchema
 
 courseRouter = APIRouter()
 
-@courseRouter.get("/course/getAllCourse", tags=["Course"])
+@courseRouter.get("/course/getAllCourse", response_model= courseSchema.SeatStatusMessage, tags=["Course"])
 def getAllCourse(conn:Session = Depends(getDBSession)):
     allCourseId = conn.execute(select(t_Course.c.id)).unique().all()
     print(allCourseId)
@@ -31,16 +31,18 @@ def getAllCourse(conn:Session = Depends(getDBSession)):
 
         firstCourseInfo = {
             'id':firstCourseInfo[0],
-            'date':firstCourseInfo[2],
-            'name':firstCourseInfo[3],
+            'name':firstCourseInfo[2],
+            'classroom':firstCourseInfo[3],
             'date':dateList
         }
-        
+        firstCourseInfo = parse_obj_as(courseSchema.showAllCourse, firstCourseInfo)
+
         returnCourseList.append(firstCourseInfo)
+    returnCourseList = parse_obj_as(List[courseSchema.showAllCourse], returnCourseList)
+    message = courseSchema.SeatStatusMessage(message="sucess",data = returnCourseList)
 
-    print(returnCourseList)
 
-    return returnCourseList
+    return message
 
 
 @courseRouter.get("/course/getCourse",response_model= courseSchema.SeatStatusMessage,tags=["Course"])
