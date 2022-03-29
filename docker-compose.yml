@@ -9,5 +9,7 @@ services:
       - ./db/data:/bitnami/mysql/data
       - ./db/init-scripts:/docker-entrypoint-initdb.d
     environment:
-      ALLOW_EMPTY_PASSWORD: 'yes'
+      ALLOW_EMPTY_PASSWORD: 'no'
       MYSQL_DATABASE: 'master'
+      MYSQL_ROOT_USER: 'root'
+      MYSQL_ROOT_PASSWORD: 'ZFhLrUg1QV9FzUy4x8RT'
