@@ -1,7 +1,7 @@
 import datetime
 from email import message
 from pydantic import BaseModel
-from typing import List
+from typing import List,Union
 from schemas.seatSchema import reserveName
 
 class dbCourse(BaseModel):
@@ -17,6 +17,12 @@ class courseSeat(BaseModel):
     totalSeat:int
     seats:List[reserveName]
 
+class showAllCourse(BaseModel):
+    id:str
+    name:str
+    classroom:str
+    date:List[datetime.date]
+
 class SeatStatusMessage(BaseModel):
     message: str
-    data:courseSeat
+    data:Union[courseSeat,List[showAllCourse]]
