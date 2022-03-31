@@ -6,13 +6,14 @@ from pydantic import parse_obj_as
 from typing import List
 
 from config.db import getDBSession
-from models.model import t_Seat, t_Course
+from models.model import t_Seat, t_Course, t_Student
 from schemas import seatSchema, courseSchema
 
 seatRouter = APIRouter()
 
 @seatRouter.post("/seat/book", tags= ["Seat"])
 def bookSeat(seat: seatSchema.dbSeat ,conn:Session = Depends(getDBSession)):
+
     # is the course exist?
     targetCourse = conn.execute(t_Course.select().where(
         t_Course.c.id == seat.course_id,
@@ -30,8 +31,14 @@ def bookSeat(seat: seatSchema.dbSeat ,conn:Session = Depends(getDBSession)):
         t_Seat.c.course_id == seat.course_id,
         t_Seat.c.course_date == seat.course_date,
         t_Seat.c.reserved_by == seat.reserved_by,
-    )).all()
-    if len(record) > 0 : 
+    )).first()
+    if record : 
+        raise HTTPException(status_code = 400, detail = "Invalid Reservation")
+
+    sameSeat = conn.execute(t_Seat.select().where(
+        t_Seat.c.seat_id == seat.seat_id
+    )).first()
+    if sameSeat :
         raise HTTPException(status_code = 400, detail = "Invalid Reservation")
 
     conn.execute(t_Seat.insert().values(
