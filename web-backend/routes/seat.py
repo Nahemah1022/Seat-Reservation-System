@@ -13,6 +13,12 @@ seatRouter = APIRouter()
 
 @seatRouter.post("/seat/book", tags= ["Seat"])
 def bookSeat(seat: seatSchema.dbSeat ,conn:Session = Depends(getDBSession)):
+    # is the reserved_by id exist?
+    user = conn.execute(t_Student.select().where(
+        t_Student.c.id == seat.reserved_by
+    )).first()
+    if user == None:
+        raise HTTPException(status_code = 400, detail = "Invalid User")
 
     # is the course exist?
     targetCourse = conn.execute(t_Course.select().where(
@@ -22,8 +28,8 @@ def bookSeat(seat: seatSchema.dbSeat ,conn:Session = Depends(getDBSession)):
     if targetCourse == None: 
         raise HTTPException(status_code = 400, detail = "Invalid Course")
 
-    # is the seat valid?
-    if seat.seat_id < 0 or seat.seat_id > targetCourse.seats:
+    # is the seat valid (0 ~ # of seat - 1)?
+    if seat.seat_id < 0 or seat.seat_id >= targetCourse.seats:
         raise HTTPException(status_code = 400, detail = "Invalid Seat")
 
     # can't reserve multiple seats by the same one.
