@@ -17,9 +17,18 @@
     <div class="body">
       <div class="option-menu">
         <h2 class="text">請選擇課程:</h2>
-        <select class="lesson-select" v-model="LessonName">
-          <option value="軟體工程">軟體工程 (4201-64人)</option>
-          <option value="資料庫系統">資料庫系統 (4203-64人)</option>
+        <select
+          class="lesson-select"
+          v-model="LessonName"
+          @click="ChooseLesson"
+        >
+          <option
+            v-for="Course in CourseList"
+            :value="Course.id"
+            :key="Course.id"
+          >
+            {{ Course.id + "   ( " + Course.classroom + " )" }}
+          </option>
         </select>
         <h2 class="date-text">請選擇日期:</h2>
         <select class="date-select" v-model="LessonTime">
@@ -46,6 +55,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "jquery";
 import "bootstrap/dist/js/bootstrap.min.js";
 import SignPopup from "./SignPopup.vue";
+
 export default {
   name: "Function_Bar",
   data() {
@@ -53,6 +63,20 @@ export default {
       LessonName: "請選擇課程名稱:",
       LessonTime: "請選擇課程日期:",
       Is_SignUp: false,
+      CourseList: [
+        {
+          id: "ALGO",
+          name: "演算法",
+          classroom: "65405",
+          date: ["2022-04-01", "2022-04-08"],
+        },
+        {
+          id: "SW",
+          name: "軟體工程",
+          classroom: "4201",
+          date: ["2022-03-31", "2022-04-05"],
+        },
+      ],
     };
   },
   methods: {
@@ -63,6 +87,21 @@ export default {
     Sign_up() {
       this.$store.commit("setLogin", true);
       this.Is_SignUp = true;
+    },
+    async ChooseLesson() {
+      const response = await fetch("/course/getAllCourse");
+      const res = await response.json();
+
+      var i;
+      for (i = 0; i < res.data.length; i++) {
+        this.CourseList[i].id = res.data[i].id;
+        this.CourseList[i].name = res.data[i].name;
+        this.CourseList[i].classroom = res.data[i].classroom;
+        this.CourseList[i].date = res.data[i].date;
+      }
+      this.CourseList.length = res.data.length;
+      this.ready = true;
+      this.renderComponent = true;
     },
   },
   components: {
