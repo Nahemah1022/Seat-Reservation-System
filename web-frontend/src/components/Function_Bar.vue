@@ -49,7 +49,6 @@
       <div class="seat">
         <div class="seat-text">請選擇課程與日期</div>
       </div>
-      <div>{{ this.LessonName }}</div>
     </div>
     <!--<div class="win" v-if="this.$store.state.isLogin == true">
       <SignPopup></SignPopup>
