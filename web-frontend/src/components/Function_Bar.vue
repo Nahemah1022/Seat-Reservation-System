@@ -20,20 +20,27 @@
         <select
           class="lesson-select"
           v-model="LessonName"
-          @click="ChooseLesson"
+          @click="ShowLesson"
+          @change="ChooseLesson"
         >
           <option
             v-for="Course in CourseList"
-            :value="Course.id"
-            :key="Course.id"
+            :value="Course.name"
+            :key="Course.name"
           >
-            {{ Course.id + "   ( " + Course.classroom + " )" }}
+            {{ Course.name + "   ( " + Course.classroom + " )" }}
           </option>
         </select>
         <h2 class="date-text">請選擇日期:</h2>
         <select class="date-select" v-model="LessonTime">
-          <option value="2022/03/29">2022/03/29</option>
-          <option value="2022/04/05">2022/04/05</option>
+          <option
+            v-for="Date in DateList"
+            :value="Date"
+            :key="Date"
+            @click="ChooseDate"
+          >
+            {{ Date }}
+          </option>
         </select>
       </div>
       <div class="option-menu">
@@ -42,6 +49,7 @@
       <div class="seat">
         <div class="seat-text">請選擇課程與日期</div>
       </div>
+      <div>{{ this.LessonName }}</div>
     </div>
     <!--<div class="win" v-if="this.$store.state.isLogin == true">
       <SignPopup></SignPopup>
@@ -63,6 +71,8 @@ export default {
       LessonName: "請選擇課程名稱:",
       LessonTime: "請選擇課程日期:",
       Is_SignUp: false,
+      CourseSelect: false,
+      TimeSelect: false,
       CourseList: [
         {
           id: "ALGO",
@@ -77,6 +87,7 @@ export default {
           date: ["2022-03-31", "2022-04-05"],
         },
       ],
+      DateList: [],
     };
   },
   methods: {
@@ -88,7 +99,7 @@ export default {
       this.$store.commit("setLogin", true);
       this.Is_SignUp = true;
     },
-    async ChooseLesson() {
+    async ShowLesson() {
       const response = await fetch("/course/getAllCourse");
       const res = await response.json();
 
@@ -99,9 +110,26 @@ export default {
         this.CourseList[i].classroom = res.data[i].classroom;
         this.CourseList[i].date = res.data[i].date;
       }
-      this.CourseList.length = res.data.length;
-      this.ready = true;
-      this.renderComponent = true;
+      this.CourseSelect = true;
+    },
+    ChooseLesson() {
+      // pop all element in array
+      for (i = 0; i <= this.DateList.length; i++) {
+        this.DateList.pop();
+      }
+      // mutex
+      while (this.LessonName[0] == "請") {
+        continue;
+      }
+      var i, j;
+      for (i = 0; i < this.CourseList.length; i++) {
+        if (this.LessonName == this.CourseList[i].name) {
+          for (j = 0; j < this.CourseList[i].date.length; j++) {
+            this.DateList.push(this.CourseList[i].date[j]);
+          }
+        }
+      }
+      this.TimeSelect = true;
     },
   },
   components: {
