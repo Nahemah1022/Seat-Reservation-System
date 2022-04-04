@@ -4,6 +4,7 @@ export default createStore({
   state: {
     ID: "",
     password: "",
+    name: "",
     isLogin: false,
     isRegister: false,
   },
@@ -14,6 +15,10 @@ export default createStore({
     },
     setRegister(state, isRegister) {
       state.isRegister = isRegister;
+    },
+    setUserInformation(state, item) {
+      state.ID = item.i;
+      state.name = item.n;
     },
   },
   actions: {},

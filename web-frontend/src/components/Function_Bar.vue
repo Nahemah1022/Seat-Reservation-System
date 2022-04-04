@@ -1,18 +1,34 @@
 <template>
   <div>
     <transition name="fade">
-      <div class="Mask" v-show="this.$store.state.isLogin == true">
+      <div class="Mask" v-if="this.$store.state.isLogin == true">
         <SignPopup class="win" :isSignup="Is_SignUp"></SignPopup>
       </div>
     </transition>
     <div class="menu">
       <h2 class="menu-text">Seat Reservaion System</h2>
-      <button @click="Sign" id="login" type="button" class="btn btn-light">
+      <button
+        v-if="this.$store.state.name == ''"
+        @click="Sign"
+        id="login"
+        type="button"
+        class="btn btn-light"
+      >
         登入
       </button>
-      <button @click="Sign_up" id="register" type="button" class="btn btn-dark">
+      <button
+        v-if="this.$store.state.name == ''"
+        @click="Sign_up"
+        id="register"
+        type="button"
+        class="btn btn-dark"
+      >
         註冊
       </button>
+      <span class="user-info" v-if="this.$store.state.name != ''"
+        >您好，{{ this.$store.state.name }}({{ this.$store.state.ID }}) &nbsp;
+        <a href="#" @click="Sign_out">登出</a></span
+      >
     </div>
     <div class="body">
       <div class="option-menu">
@@ -97,6 +113,11 @@ export default {
     Sign_up() {
       this.$store.commit("setLogin", true);
       this.Is_SignUp = true;
+    },
+    Sign_out() {
+      var i = "";
+      var n = "";
+      this.$store.commit("setUserInformation", { i, n });
     },
     async ShowLesson() {
       const response = await fetch("/course/getAllCourse");
@@ -194,6 +215,24 @@ export default {
   #register {
     left: 65%;
     color: #ffffff;
+  }
+
+  span {
+    position: relative;
+    height: 29px;
+    top: 20%;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-weight: 600;
+    font-size: 15.5px;
+    line-height: 22px;
+    /* identical to box height */
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+    left: 62.5%;
+    color: #555555;
   }
 }
 .Mask {

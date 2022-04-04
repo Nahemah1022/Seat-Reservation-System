@@ -63,7 +63,9 @@
       </table>
     </div>
     <div class="button-group">
-      <span v-if="Is_alarm" style="color: red">{{ Alarm_text }}</span>
+      <span v-if="Is_alarm" :style="{ color: Alarm_text_color }">{{
+        Alarm_text
+      }}</span>
       <input @click="Cancel" type="button" value="取消" />
       <input
         @click="Commit_signup"
@@ -75,7 +77,6 @@
     </div>
   </popup-frame>
 </template>
-label
 
 <script>
 import PopupFrame from "./PopupFrame.vue";
@@ -94,14 +95,28 @@ export default {
       Password: "",
       Password_twice: "",
       Is_alarm: false,
-      Alarm_text: "tt",
+      Alarm_text: "",
+      timer: "",
     };
   },
   methods: {
     Cancel() {
       this.$store.commit("setLogin", false);
     },
-    Commit_signup() {
+    Commit() {
+      if (this.isSignup) {
+        this.Commit_signup();
+      } else {
+        this.Commit_signin();
+      }
+    },
+    Clear_input() {
+      this.Name = "";
+      this.Account = "";
+      this.Password = "";
+      this.Password_twice = "";
+    },
+    async Commit_signup() {
       this.Is_alarm = true;
       if (this.Name == "") {
         this.Alarm_text = "名字不能為空白！";
@@ -112,19 +127,91 @@ export default {
       } else if (this.Password_twice != this.Password) {
         this.Alarm_text = "密碼不一致！";
       } else {
-        this.Is_alarm = false;
+        //this.Is_alarm = false;
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: this.Account,
+            name: this.Name,
+            password: this.Password,
+          }),
+        };
+        const response = await fetch("/users/register", requestOptions);
+        const res = await response.json();
+        if (res.message == "success") {
+          this.Alarm_text = "註冊成功";
+          await new Promise((r) => setTimeout(r, 1000));
+          var i = res.data.id;
+          var n = res.data.name;
+          this.$store.commit("setUserInformation", { i, n });
+          this.$store.commit("setLogin", false);
+          this.Alarm_text = "";
+        } else {
+          if (res.detail == "ID already registered") {
+            this.Alarm_text = "帳號已存在！";
+          } else {
+            this.Alarm_text = res.detail;
+          }
+        }
       }
     },
-    Commit_signin() {
+    async Commit_signin() {
+      this.Is_alarm = true;
       if (this.Account == "") {
-        this.Is_alarm = true;
         this.Alarm_text = "帳號不能為空白！";
       } else if (this.Password == "") {
-        this.Is_alarm = true;
         this.Alarm_text = "密碼不能為空白！";
       } else {
-        this.Is_alarm = false;
+        //this.Is_alarm = false;
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: this.Account,
+            password: this.Password,
+          }),
+        };
+        const response = await fetch("/users/login", requestOptions);
+        const res = await response.json();
+        if (res.message == "success") {
+          this.Alarm_text = "登入成功";
+          await new Promise((r) => setTimeout(r, 1000));
+          var i = res.data.id;
+          var n = res.data.name;
+          this.$store.commit("setUserInformation", { i, n });
+          this.$store.commit("setLogin", false);
+          this.Alarm_text = "";
+        } else {
+          if (res.detail == "Invalid ID/Password") {
+            this.Alarm_text = "帳號或密碼輸入錯誤！";
+          } else {
+            this.Alarm_text = res.detail;
+          }
+        }
       }
+    },
+    Detect_enter(e) {
+      if (e.key == "Enter") {
+        this.Commit();
+      }
+    },
+  },
+  created() {
+    window.addEventListener("keydown", this.Detect_enter);
+  },
+  unmounted() {
+    window.removeEventListener("keydown", this.Detect_enter);
+  },
+  computed: {
+    Alarm_text_color: function () {
+      var r;
+      if (this.Alarm_text == "登入成功" || this.Alarm_text == "註冊成功") {
+        r = "green";
+      } else {
+        r = "red";
+      }
+      return r;
     },
   },
   components: {
