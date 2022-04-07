@@ -36,7 +36,6 @@
         <select
           class="lesson-select"
           v-model="LessonName"
-          @click="ShowLesson"
           @change="ChooseLesson"
         >
           <option
@@ -96,6 +95,12 @@ export default {
           date: ["2022-04-01", "2022-04-08"],
         },
         {
+          id: "NASA",
+          name: "計算機網路",
+          classroom: "65304",
+          date: ["2022-04-07"],
+        },
+        {
           id: "SW",
           name: "軟體工程",
           classroom: "4201",
@@ -119,16 +124,23 @@ export default {
       var n = "";
       this.$store.commit("setUserInformation", { i, n });
     },
+    mounted: function () {
+      this.ShowLesson();
+    },
     async ShowLesson() {
       const response = await fetch("/course/getAllCourse");
       const res = await response.json();
-
-      var i;
+      var i, j;
+      for (j = 0; j < this.CourseList.length; j++) {
+        this.CourseList.pop();
+      }
       for (i = 0; i < res.data.length; i++) {
-        this.CourseList[i].id = res.data[i].id;
-        this.CourseList[i].name = res.data[i].name;
-        this.CourseList[i].classroom = res.data[i].classroom;
-        this.CourseList[i].date = res.data[i].date;
+        this.CourseList.push({
+          id: res.data[i].id,
+          name: res.data[i].name,
+          classroom: res.data[i].classroom,
+          date: res.data[i].date,
+        });
       }
       this.CourseSelect = true;
     },
