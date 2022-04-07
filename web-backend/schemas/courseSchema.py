@@ -25,4 +25,8 @@ class showAllCourse(BaseModel):
 
 class SeatStatusMessage(BaseModel):
     message: str
-    data:Union[courseSeat,List[showAllCourse]]
+    data:courseSeat
+
+class AllCourseStatusMessage(BaseModel):
+    message: str
+    data:List[showAllCourse]
