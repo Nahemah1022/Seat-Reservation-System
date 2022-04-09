@@ -2,11 +2,13 @@
   <div v-if="isChooseCourse" class="container">
     <div class="desk">講台</div>
     <div class="seat-table">
-      <div v-for="foo in seatDetails" :key="foo" class="foo.status"></div>
+      <div v-for="foo in seatDetails" :key="foo" class="seats"></div>
     </div>
     <div class="legend">
       <div v-for="foo in legend" :key="foo" class="foo.status">
-        {{ foo.value }}
+        <div class="legend-text">
+          {{ foo.value }}
+        </div>
       </div>
     </div>
     <div class="btn"></div>
@@ -145,17 +147,17 @@ export default {
     top: 5%;
     width: 80%;
     height: 6%;
-    padding: 0.5%;
+    padding: 0.4%;
     text-align: center;
   }
   .seat-table {
     width: 85%;
     height: 70%;
     display: flex;
-    margin: 12% 20%;
+    margin: 10% 20%;
     .seats {
       margin: 2%;
-      padding: 3%;
+      padding: 2%;
       border-radius: 3px;
       background-color: #c4c4c4;
       &available {
