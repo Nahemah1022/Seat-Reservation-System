@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-SQLALCHEMY_DATABASE_URI:str = 'mysql+pymysql://root@localhost:3309/master'
+SQLALCHEMY_DATABASE_URI:str = 'mysql+pymysql://root:ZFhLrUg1QV9FzUy4x8RT@db/master'
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
 meta = MetaData()
