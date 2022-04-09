@@ -32,7 +32,7 @@
     </div>
     <div class="body">
       <div class="option-menu">
-        <h2 class="text">請選擇課程:</h2>
+        <h2 class="text">請選擇課程：</h2>
         <select
           class="lesson-select"
           v-model="LessonName"
@@ -47,7 +47,7 @@
             {{ Course.name + "   ( " + Course.classroom + " )" }}
           </option>
         </select>
-        <h2 class="date-text">請選擇日期:</h2>
+        <h2 class="date-text">請選擇日期：</h2>
         <select class="date-select" v-model="LessonTime">
           <option
             v-for="Date in DateList"
@@ -63,7 +63,7 @@
         <h2 class="text">教室位置圖</h2>
       </div>
       <div class="seat">
-        <div class="seat-text">請選擇課程與日期</div>
+        <SeatTable :isChooseCourse="Is_ChooseCourse" />
       </div>
     </div>
     <!--<div class="win" v-if="this.$store.state.isLogin == true">
@@ -78,6 +78,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "jquery";
 import "bootstrap/dist/js/bootstrap.min.js";
 import SignPopup from "./SignPopup.vue";
+import SeatTable from "./SeatReserve.vue";
+// import { getAllCourse } from "@/api";
 
 export default {
   name: "Function_Bar",
@@ -103,6 +105,7 @@ export default {
         },
       ],
       DateList: [],
+      Is_ChooseCourse: false,
     };
   },
   methods: {
@@ -120,16 +123,24 @@ export default {
       this.$store.commit("setUserInformation", { i, n });
     },
     async ShowLesson() {
-      const response = await fetch("/course/getAllCourse");
-      const res = await response.json();
-
-      var i;
-      for (i = 0; i < res.data.length; i++) {
-        this.CourseList[i].id = res.data[i].id;
-        this.CourseList[i].name = res.data[i].name;
-        this.CourseList[i].classroom = res.data[i].classroom;
-        this.CourseList[i].date = res.data[i].date;
-      }
+      // const response = await fetch("/course/getAllCourse");
+      // const res = await response.json();
+      // getAllCourse()
+      //   .then((res) => {
+      //     if (res.status == 200) {
+      //       this.CourseList = res.data;
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
+      // var i;
+      // for (i = 0; i < res.data.length; i++) {
+      //   this.CourseList[i].id = res.data[i].id;
+      //   this.CourseList[i].name = res.data[i].name;
+      //   this.CourseList[i].classroom = res.data[i].classroom;
+      //   this.CourseList[i].date = res.data[i].date;
+      // }
       this.CourseSelect = true;
     },
     ChooseLesson() {
@@ -150,10 +161,16 @@ export default {
         }
       }
       this.TimeSelect = true;
+      if (this.CourseSelect == true && this.TimeSelect == true) {
+        this.Is_ChooseCourse = true;
+      } else {
+        this.Is_ChooseCourse = false;
+      }
     },
   },
   components: {
     SignPopup,
+    SeatTable,
   },
 };
 </script>
