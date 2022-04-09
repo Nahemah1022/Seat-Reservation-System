@@ -58,20 +58,24 @@ export function bookSeat(course_id, course_date, seat_id, reserved_by) {
   return request({
     url: "/seat/book",
     method: "POST",
-    course_id: course_id,
-    course_date: course_date,
-    seat_id: seat_id,
-    reserved_by: reserved_by,
+    data: {
+      course_id: course_id,
+      course_date: course_date,
+      seat_id: seat_id,
+      reserved_by: reserved_by,
+    },
   });
 }
 
-export function cabcelBookedSeat(course_id, course_date, seat_id, reserved_by) {
+export function cancelBookedSeat(course_id, course_date, seat_id, reserved_by) {
   return request({
     url: "/seat/cancel",
     method: "POST",
-    course_id: course_id,
-    course_date: course_date,
-    seat_id: seat_id,
-    reserved_by: reserved_by,
+    data: {
+      course_id: course_id,
+      course_date: course_date,
+      seat_id: seat_id,
+      reserved_by: reserved_by,
+    },
   });
 }

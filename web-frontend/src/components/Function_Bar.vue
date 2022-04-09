@@ -48,13 +48,8 @@
           </option>
         </select>
         <h2 class="date-text">請選擇日期：</h2>
-        <select class="date-select" v-model="LessonTime">
-          <option
-            v-for="Date in DateList"
-            :value="Date"
-            :key="Date"
-            @click="ChooseDate"
-          >
+        <select class="date-select" v-model="LessonTime" @change="ChooseDate">
+          <option v-for="Date in DateList" :value="Date" :key="Date">
             {{ Date }}
           </option>
         </select>
@@ -63,7 +58,12 @@
         <h2 class="text">教室位置圖</h2>
       </div>
       <div class="seat">
-        <SeatTable :isChooseCourse="Is_ChooseCourse" />
+        <SeatTable
+          ref="SeatTable"
+          :isChooseCourse="Is_ChooseCourse"
+          :course_id="LessonId"
+          :course_date="LessonTime"
+        />
       </div>
     </div>
     <!--<div class="win" v-if="this.$store.state.isLogin == true">
@@ -79,7 +79,6 @@ import "jquery";
 import "bootstrap/dist/js/bootstrap.min.js";
 import SignPopup from "./SignPopup.vue";
 import SeatTable from "./SeatReserve.vue";
-// import { getAllCourse } from "@/api";
 
 export default {
   name: "Function_Bar",
@@ -112,6 +111,8 @@ export default {
       ],
       DateList: [],
       Is_ChooseCourse: false,
+      LessonId: "",
+      course: {},
     };
   },
   methods: {
@@ -157,17 +158,19 @@ export default {
       }
       for (i = 0; i < this.CourseList.length; i++) {
         if (this.LessonName == this.CourseList[i].name) {
+          this.LessonId = this.CourseList[i].id;
           for (j = 0; j < this.CourseList[i].date.length; j++) {
             this.DateList.push(this.CourseList[i].date[j]);
           }
         }
       }
       this.TimeSelect = true;
-      if (this.CourseSelect == true && this.TimeSelect == true) {
-        this.Is_ChooseCourse = true;
-      } else {
-        this.Is_ChooseCourse = false;
-      }
+    },
+    ChooseDate() {
+      this.course = { course_id: this.LessonId, date: this.LessonTime };
+      this.Is_ChooseCourse = true;
+      this.$refs.SeatTable.getSeats(this.course);
+      console.log(this.course);
     },
   },
   components: {

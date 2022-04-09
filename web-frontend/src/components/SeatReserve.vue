@@ -2,22 +2,33 @@
   <div v-if="isChooseCourse" class="container">
     <div class="desk">講台</div>
     <div class="seat-table">
-      <div v-for="foo in seatDetails" :key="foo" class="seats"></div>
+      <div
+        v-for="(foo, index) in seatDetails"
+        :key="index"
+        class="seats"
+        :style="getSeatColor(foo.status)"
+        @click="chooseSeat(foo.seat_id)"
+      ></div>
     </div>
     <div class="legend">
-      <div v-for="foo in legend" :key="foo" class="foo.status">
-        <div class="legend-text">
-          {{ foo.value }}
+      <div class="legend-box">
+        <div v-for="(foo, index) in legend" :key="index">
+          <div class="seats" :style="getSeatColor(foo.status)"></div>
+          <div class="legend-text">
+            {{ foo.value }}
+          </div>
         </div>
       </div>
+      <div class="btn" :class="{ active: isChoose }" @click="finishChoose">
+        {{ btnText }}
+      </div>
     </div>
-    <div class="btn"></div>
   </div>
   <div v-else class="seat-text">請選擇課程與日期</div>
 </template>
 
 <script>
-// import { getCourse } from "@/api";
+import { getCourse, bookSeat, cancelBookedSeat } from "@/api";
 export default {
   name: "SeatTable",
   props: {
@@ -25,111 +36,127 @@ export default {
       type: Boolean,
       default: false,
     },
+    course_id: {
+      type: String,
+      default: "",
+    },
+    course_date: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
       isLogin: false,
-      courseData: {
-        numberPerRow: 6,
-        totalSeat: 60,
-        seats: [
-          {
-            seat_id: 5,
-            reserved_by: "F74070000",
-            name: "陳簽博",
-          },
-        ],
-      },
-      seatDetails: [
-        {
-          status: 0,
-          seatDetail: {
-            seat_id: 0,
-            reserved_by: "F74040000",
-            name: "陳簽博",
-          },
-        },
-        {
-          status: 1,
-          seatDetail: {
-            seat_id: 2,
-          },
-        },
-        {
-          status: 0,
-          seatDetail: {
-            seat_id: 2,
-            reserved_by: "F74040000",
-            name: "陳簽博",
-          },
-        },
-      ],
+      course: [],
+      courseData: [],
+      seatDetails: [],
       legend: [
-        { status: "reserved", value: "已預約" },
-        { status: "available", value: "可預約" },
-        { status: "choose", value: "已選取" },
+        { status: 0, value: "已預約" },
+        { status: 1, value: "可預約" },
+        { status: 2, value: "已選取" },
       ],
+      isChoose: false,
+      btnText: "完成選取",
+      selectedSeat: null,
     };
   },
   methods: {
-    // getSeatTable(course_id, date) {
-    //   getCourse({ course_id: course_id, date: date })
-    //     .then((res) => {
-    //       if (res.status == 200) {
-    //         this.courseData = res.data;
-    //         let i, j;
-    //         for (i = 0; i < this.courseData.totalSeat; i++) {
-    //           for (j = 0; j < this.courseData.seats.length; j++) {
-    //             if (i == this.courseData.seats[j].seat_id) {
-    //               this.seatDetails[i].push({
-    //                 status: 0,
-    //                 seatDetail: this.courseData.seats[j],
-    //               });
-    //             } else {
-    //               this.seatDetails[i].push({
-    //                 status: 1,
-    //                 seatDetail: {},
-    //               });
-    //             }
-    //           }
-    //         }
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // },
-    getSeats() {
-      let i, j;
-      for (i = 0; i < this.courseData.totalSeat; i++) {
-        for (j = 0; j < this.courseData.seats.length; j++) {
-          if (i == this.courseData.seats[j].seat_id) {
-            this.seatDetails[i].push({
-              status: 0,
-              seatDetail: this.courseData.seats[j],
-            });
-          } else {
-            console.log(this.courseData.seats);
-            this.seatDetails[i].push({
+    getSeats(course) {
+      this.course = [];
+      this.courseData = [];
+      this.seatDetails = [];
+      this.selectedSeat = null;
+      this.isChoose = false;
+      getCourse(course.course_id, course.date).then((res) => {
+        if (res.status == 200) {
+          this.courseData = res.data.data;
+          let i;
+          for (i = 0; i < this.courseData.totalSeat; i++) {
+            this.seatDetails.push({
+              seat_id: i,
               status: 1,
-              seatDetail: {
-                seat_id: i,
-              },
+              info: [],
             });
-            console.log(this.seatDetails[i]);
           }
+          for (i = 0; i < this.courseData.seats.length; i++) {
+            let id = this.courseData.seats[i].seat_id;
+            if (id == this.$store.state.ID) {
+              this.seatDetails[id].status = 2;
+              this.btnText = "取消預約";
+            } else {
+              this.seatDetails[id].status = 0;
+              this.seatDetails[id].info.push({
+                reserved_by: this.courseData.seats[i].reserved_by,
+                name: this.courseData.seats[i].name,
+              });
+            }
+          }
+        }
+      });
+    },
+    getSeatColor(status) {
+      if (status == 0) {
+        return "background-color: #c4c4c4";
+      } else if (status == 1) {
+        return "background-color: #18a0fb";
+      } else {
+        return "background-color: #fb5c18";
+      }
+    },
+    chooseSeat(seat_id) {
+      if (this.seatDetails[seat_id].status == 1) {
+        this.seatDetails[seat_id].status = 2;
+        if (this.selectedSeat != null) {
+          this.seatDetails[this.selectedSeat].status = 1;
+          this.selectedSeat = null;
+        }
+        this.isChoose = true;
+        this.selectedSeat = seat_id;
+        this.btnText = "完成選取";
+      } else if (this.seatDetails[seat_id].status == 2) {
+        if (
+          this.seatDetails[this.selectedSeat].info.reserved_by !=
+          this.$store.state.ID
+        ) {
+          this.seatDetails[seat_id].status = 1;
+          this.isChoose = false;
+          this.selectedSeat = null;
         }
       }
     },
-  },
-  computed: {
-    getSeatColor(status) {
-      if (status == 0) {
-        return "#c4c4c4";
-      } else if (status == 1) {
-        return "#18a0fb";
+    finishChoose() {
+      if (this.$store.state.ID == "") {
+        this.$store.commit("setLogin", true);
       } else {
-        return "#fb5c18";
+        if (
+          this.seatDetails[this.selectedSeat].info.reserved_by !=
+          this.$store.state.ID
+        ) {
+          bookSeat(
+            this.course_id,
+            this.course_date,
+            this.selectedSeat,
+            this.$store.state.ID
+          );
+          this.btnText = "取消預訂";
+        } else {
+          cancelBookedSeat(
+            this.course_id,
+            this.course_date,
+            this.selectedSeat,
+            this.$store.state.ID
+          );
+          console.log(
+            this.course_id,
+            this.course_date,
+            this.selectedSeat,
+            this.$store.state.ID
+          );
+          this.selectedSeat = null;
+          this.btnText = "完成選取";
+          this.isChoose = false;
+        }
       }
     },
   },
@@ -145,7 +172,7 @@ export default {
     position: absolute;
     background-color: #c4c4c4;
     top: 5%;
-    width: 80%;
+    width: 90%;
     height: 6%;
     padding: 0.4%;
     text-align: center;
@@ -154,27 +181,66 @@ export default {
     width: 85%;
     height: 70%;
     display: flex;
-    margin: 10% 20%;
+    flex-wrap: wrap;
+    margin: 5% 10%;
     .seats {
-      margin: 2%;
+      margin: 1.7%;
       padding: 2%;
       border-radius: 3px;
-      background-color: #c4c4c4;
-      &available {
+      .status0 {
+        background-color: #c4c4c4;
+      }
+      .status1 {
         background-color: #18a0fb;
       }
-      &choose {
+      .status2 {
         background-color: #fb5c18;
       }
     }
   }
   .legend {
     position: absolute;
-    bottom: 5%;
+    bottom: 0%;
+    width: 100%;
+    z-index: 99;
     display: flex;
-    .box {
-      margin: 5%;
-      padding: 3%;
+    align-items: center;
+    .legend-box {
+      width: 65%;
+      height: 5%;
+      display: flex;
+      flex-direction: row;
+      margin: 2% 7%;
+      justify-content: space-between;
+      align-items: center;
+      div {
+        flex: auto;
+        display: flex;
+        align-items: center;
+        margin-right: 5%;
+        .seats {
+          flex: none;
+          padding: 10%;
+          width: 10%;
+          border-radius: 3px;
+        }
+        .legend-text {
+          position: relative;
+          flex: none;
+          font-size: 0.8rem;
+        }
+      }
+    }
+    .btn {
+      right: 10%;
+      width: 15%;
+      height: 5%;
+      background-color: #c4c4c4;
+      &.active {
+        background-color: #fb5c18;
+        color: #ffffff;
+        filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.2));
+      }
     }
   }
 }
