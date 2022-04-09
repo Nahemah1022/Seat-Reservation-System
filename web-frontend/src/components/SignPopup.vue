@@ -22,7 +22,7 @@
         </tr>
         <tr>
           <td>
-            <label for="account">帳號</label>
+            <label for="account">學號</label>
           </td>
           <td>
             <input
