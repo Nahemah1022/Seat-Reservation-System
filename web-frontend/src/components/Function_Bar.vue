@@ -98,6 +98,12 @@ export default {
           date: ["2022-04-01", "2022-04-08"],
         },
         {
+          id: "NASA",
+          name: "計算機網路",
+          classroom: "65304",
+          date: ["2022-04-07"],
+        },
+        {
           id: "SW",
           name: "軟體工程",
           classroom: "4201",
@@ -123,36 +129,32 @@ export default {
       this.$store.commit("setUserInformation", { i, n });
     },
     async ShowLesson() {
-      // const response = await fetch("/course/getAllCourse");
-      // const res = await response.json();
-      // getAllCourse()
-      //   .then((res) => {
-      //     if (res.status == 200) {
-      //       this.CourseList = res.data;
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-      // var i;
-      // for (i = 0; i < res.data.length; i++) {
-      //   this.CourseList[i].id = res.data[i].id;
-      //   this.CourseList[i].name = res.data[i].name;
-      //   this.CourseList[i].classroom = res.data[i].classroom;
-      //   this.CourseList[i].date = res.data[i].date;
-      // }
+      const response = await fetch("/course/getAllCourse");
+      const res = await response.json();
+      var i, j;
+      for (j = 0; this.CourseList.length != 0; j++) {
+        this.CourseList.pop();
+      }
+      for (i = 0; i < res.data.length; i++) {
+        this.CourseList.push({
+          id: res.data[i].id,
+          name: res.data[i].name,
+          classroom: res.data[i].classroom,
+          date: res.data[i].date,
+        });
+      }
       this.CourseSelect = true;
     },
     ChooseLesson() {
+      var i, j, k;
       // pop all element in array
-      for (i = 0; i <= this.DateList.length; i++) {
+      for (k = 0; this.DateList.length != 0; k++) {
         this.DateList.pop();
       }
       // mutex
       while (this.LessonName[0] == "請") {
         continue;
       }
-      var i, j;
       for (i = 0; i < this.CourseList.length; i++) {
         if (this.LessonName == this.CourseList[i].name) {
           for (j = 0; j < this.CourseList[i].date.length; j++) {
