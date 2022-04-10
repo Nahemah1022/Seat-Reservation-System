@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   db:
@@ -18,7 +18,7 @@ services:
   backend:
     build: ./web-backend
     container_name: web-backend
-    # restart: always
+    restart: always
     ports:
       - "8000:8000"
     command: uvicorn main:app --reload-dir ./ --host 0.0.0.0 --port 8000
@@ -27,5 +27,12 @@ services:
     links:
       - "db"
     depends_on:
-      - db  
+      - db
+  frontend:
+    build: 
+      context: ./web-frontend
+      network: host
+    container_name: web-frontend
+    ports:
+      - "7000:8080"
 
