@@ -207,8 +207,8 @@ export default {
       // seatBox.scrollLeft = (x / overW) * overs.x;
       // seatBox.scrollTop = (y / overH) * overs.y;
 
-      showDiv.style.left = event.pageX - 150 + "px";
-      showDiv.style.top = event.pageY - 300 + "px";
+      showDiv.style.left = event.pageX - 180 + "px";
+      showDiv.style.top = event.pageY - 280 + "px";
       showDiv.style.display = "block";
     },
     leaveSeat() {
