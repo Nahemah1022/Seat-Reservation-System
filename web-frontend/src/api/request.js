@@ -3,7 +3,7 @@ import qs from "qs";
 
 const service = axios.create({
   baseURL: "http://140.116.249.231:8000/",
-  withCredentials: true,
+  withCredentials: false,
   timeout: 5000,
   headers: {
     "Access-Control-Allow-Origin": "*",

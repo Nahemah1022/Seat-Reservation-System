@@ -8,7 +8,12 @@
         class="seats"
         :style="getSeatColor(foo.status)"
         @click="chooseSeat(foo.seat_id)"
+        @mouseenter="showSeat($event, foo.seat_id)"
+        @mouseleave="leaveSeat"
       ></div>
+      <div id="hoverBox" v-show="showHover">
+        <div class="hoverText">{{ hoverInfo }}</div>
+      </div>
     </div>
     <div class="legend">
       <div class="legend-box">
@@ -48,7 +53,6 @@ export default {
   data() {
     return {
       isLogin: false,
-      course: [],
       courseData: [],
       seatDetails: [],
       legend: [
@@ -59,11 +63,13 @@ export default {
       isChoose: false,
       btnText: "完成選取",
       selectedSeat: null,
+      canBook: true,
+      showHover: false,
+      hoverInfo: "",
     };
   },
   methods: {
     getSeats(course) {
-      this.course = [];
       this.courseData = [];
       this.seatDetails = [];
       this.selectedSeat = null;
@@ -79,17 +85,19 @@ export default {
               info: [],
             });
           }
+          console.log(this.seatDetails);
           for (i = 0; i < this.courseData.seats.length; i++) {
-            let id = this.courseData.seats[i].seat_id;
-            if (id == this.$store.state.ID) {
-              this.seatDetails[id].status = 2;
+            let seat_id = this.courseData.seats[i].seat_id;
+            let user_id = this.courseData.seats[i].reserved_by;
+            this.seatDetails[seat_id].info.push({
+              reserved_by: user_id,
+              name: this.courseData.seats[i].name,
+            });
+            if (user_id == this.$store.state.ID) {
+              this.seatDetails[seat_id].status = 2;
               this.btnText = "取消預約";
             } else {
-              this.seatDetails[id].status = 0;
-              this.seatDetails[id].info.push({
-                reserved_by: this.courseData.seats[i].reserved_by,
-                name: this.courseData.seats[i].name,
-              });
+              this.seatDetails[seat_id].status = 0;
             }
           }
         }
@@ -106,6 +114,7 @@ export default {
     },
     chooseSeat(seat_id) {
       if (this.seatDetails[seat_id].status == 1) {
+        // can be reserved
         this.seatDetails[seat_id].status = 2;
         if (this.selectedSeat != null) {
           this.seatDetails[this.selectedSeat].status = 1;
@@ -114,34 +123,42 @@ export default {
         this.isChoose = true;
         this.selectedSeat = seat_id;
         this.btnText = "完成選取";
-      } else if (this.seatDetails[seat_id].status == 2) {
+      } else if (this.seatDetails[seat_id].status == 0) {
+        // cannot be reserved
         if (
-          this.seatDetails[this.selectedSeat].info.reserved_by !=
+          this.seatDetails[this.selectedSeat].info[0].reserved_by ==
           this.$store.state.ID
         ) {
-          this.seatDetails[seat_id].status = 1;
+          this.seatDetails[seat_id].status = 2;
+          this.canBook = false;
+        } else {
+          this.seatDetails[seat_id].status = 0;
           this.isChoose = false;
           this.selectedSeat = null;
+          this.canBook = false;
         }
       }
     },
     finishChoose() {
       if (this.$store.state.ID == "") {
         this.$store.commit("setLogin", true);
+        this.$emit.isChooseCourse = false;
       } else {
-        if (
-          this.seatDetails[this.selectedSeat].info.reserved_by !=
-          this.$store.state.ID
-        ) {
-          bookSeat(
+        if (this.canBook == false) {
+          console.log(this.seatDetails);
+          cancelBookedSeat(
             this.course_id,
             this.course_date,
             this.selectedSeat,
             this.$store.state.ID
           );
-          this.btnText = "取消預訂";
+          this.seatDetails[this.selectedSeat].status = 1;
+          this.selectedSeat = null;
+          this.btnText = "完成選取";
+          this.isChoose = false;
+          this.canBook = true;
         } else {
-          cancelBookedSeat(
+          bookSeat(
             this.course_id,
             this.course_date,
             this.selectedSeat,
@@ -153,11 +170,27 @@ export default {
             this.selectedSeat,
             this.$store.state.ID
           );
-          this.selectedSeat = null;
-          this.btnText = "完成選取";
-          this.isChoose = false;
+          this.btnText = "取消預訂";
+          console.log(this.seatDetails);
         }
       }
+    },
+    showSeat(event, seat_id) {
+      this.hoverInfo = "";
+      if (this.seatDetails[seat_id].status == 0) {
+        this.showHover = true;
+        this.hoverInfo = this.seatDetails[seat_id].info[0].name;
+      } else if (this.seatDetails[seat_id].status == 1) {
+        this.showHover = true;
+        this.hoverInfo = "可預約";
+      }
+      var showDiv = document.getElementById("hoverBox");
+      showDiv.style.left = event.pageX - 100 + "px";
+      showDiv.style.top = event.pageY - 200 + "px";
+      showDiv.style.display = "block";
+    },
+    leaveSeat() {
+      this.showHover = false;
     },
   },
 };
@@ -184,9 +217,10 @@ export default {
     flex-wrap: wrap;
     margin: 5% 10%;
     .seats {
+      position: relative;
       margin: 1.7%;
       padding: 2%;
-      border-radius: 3px;
+      border-radius: 0.2em;
       .status0 {
         background-color: #c4c4c4;
       }
@@ -195,6 +229,24 @@ export default {
       }
       .status2 {
         background-color: #fb5c18;
+      }
+    }
+    #hoverBox {
+      position: absolute;
+      z-index: 999;
+      min-width: 4em;
+      max-width: 4em;
+      height: 2em;
+      border-radius: 0.2em;
+      background-color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.2));
+      .hoverText {
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 0.1rem;
       }
     }
   }
@@ -222,7 +274,7 @@ export default {
           flex: none;
           padding: 10%;
           width: 10%;
-          border-radius: 3px;
+          border-radius: 0.2em;
         }
         .legend-text {
           position: relative;
@@ -237,6 +289,7 @@ export default {
       height: 5%;
       background-color: #c4c4c4;
       &.active {
+        transition: 0.3s;
         background-color: #fb5c18;
         color: #ffffff;
         filter: drop-shadow(4px 4px 4px rgba(0, 0, 0, 0.2));
@@ -250,8 +303,7 @@ export default {
   font-style: normal;
   margin: auto 0;
   font-weight: 500;
-  font-size: 24px;
-  line-height: 29px;
+  font-size: 1.2em;
   align-items: center;
   text-align: center;
   color: #555555;
