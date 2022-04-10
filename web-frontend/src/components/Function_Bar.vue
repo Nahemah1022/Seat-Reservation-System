@@ -63,6 +63,7 @@
           :isChooseCourse="Is_ChooseCourse"
           :course_id="LessonId"
           :course_date="LessonTime"
+          @update="Refresh"
         />
       </div>
     </div>
@@ -128,6 +129,7 @@ export default {
       var i = "";
       var n = "";
       this.$store.commit("setUserInformation", { i, n });
+      this.Is_ChooseCourse = false;
     },
     async ShowLesson() {
       const response = await fetch("/course/getAllCourse");
@@ -165,12 +167,16 @@ export default {
         }
       }
       this.TimeSelect = true;
+      this.Is_ChooseCourse = false;
     },
     ChooseDate() {
       this.course = { course_id: this.LessonId, date: this.LessonTime };
       this.Is_ChooseCourse = true;
       this.$refs.SeatTable.getSeats(this.course);
       console.log(this.course);
+    },
+    Refresh() {
+      this.Is_ChooseCourse = false;
     },
   },
   components: {

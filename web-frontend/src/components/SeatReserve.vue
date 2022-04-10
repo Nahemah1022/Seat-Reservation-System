@@ -142,7 +142,7 @@ export default {
     finishChoose() {
       if (this.$store.state.ID == "") {
         this.$store.commit("setLogin", true);
-        this.$emit.isChooseCourse = false;
+        this.$emit("update");
       } else {
         if (this.canBook == false) {
           cancelBookedSeat(
