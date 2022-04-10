@@ -74,6 +74,7 @@ export default {
       this.seatDetails = [];
       this.selectedSeat = null;
       this.isChoose = false;
+      this.canBook = true;
       getCourse(course.course_id, course.date).then((res) => {
         if (res.status == 200) {
           this.courseData = res.data.data;
@@ -85,7 +86,6 @@ export default {
               info: [],
             });
           }
-          console.log(this.seatDetails);
           for (i = 0; i < this.courseData.seats.length; i++) {
             let seat_id = this.courseData.seats[i].seat_id;
             let user_id = this.courseData.seats[i].reserved_by;
@@ -95,7 +95,10 @@ export default {
             });
             if (user_id == this.$store.state.ID) {
               this.seatDetails[seat_id].status = 2;
+              this.selectedSeat = seat_id;
               this.btnText = "取消預約";
+              this.isChoose = true;
+              this.canBook = false;
             } else {
               this.seatDetails[seat_id].status = 0;
             }
@@ -113,29 +116,26 @@ export default {
       }
     },
     chooseSeat(seat_id) {
-      if (this.seatDetails[seat_id].status == 1) {
-        // can be reserved
-        this.seatDetails[seat_id].status = 2;
-        if (this.selectedSeat != null) {
-          this.seatDetails[this.selectedSeat].status = 1;
-          this.selectedSeat = null;
-        }
-        this.isChoose = true;
-        this.selectedSeat = seat_id;
-        this.btnText = "完成選取";
-      } else if (this.seatDetails[seat_id].status == 0) {
-        // cannot be reserved
-        if (
-          this.seatDetails[this.selectedSeat].info[0].reserved_by ==
-          this.$store.state.ID
-        ) {
+      if (this.canBook == true) {
+        if (this.seatDetails[seat_id].status == 1) {
+          // can be reserved
           this.seatDetails[seat_id].status = 2;
-          this.canBook = false;
-        } else {
-          this.seatDetails[seat_id].status = 0;
-          this.isChoose = false;
-          this.selectedSeat = null;
-          this.canBook = false;
+          if (this.selectedSeat != null) {
+            this.seatDetails[this.selectedSeat].status = 1;
+            this.selectedSeat = null;
+          }
+          this.isChoose = true;
+          this.selectedSeat = seat_id;
+          this.btnText = "完成選取";
+        } else if (this.seatDetails[seat_id].status == 0) {
+          // cannot be reserved
+          if (
+            this.seatDetails[this.selectedSeat].info.reserved_by ==
+            this.$store.state.ID
+          ) {
+            this.seatDetails[seat_id].status = 0;
+            this.canBook = false;
+          }
         }
       }
     },
@@ -145,7 +145,6 @@ export default {
         this.$emit.isChooseCourse = false;
       } else {
         if (this.canBook == false) {
-          console.log(this.seatDetails);
           cancelBookedSeat(
             this.course_id,
             this.course_date,
@@ -164,6 +163,11 @@ export default {
             this.selectedSeat,
             this.$store.state.ID
           );
+          this.seatDetails[this.selectedSeat].status = 2;
+          this.seatDetails[this.selectedSeat].info.push({
+            reserved: this.$store.state.ID,
+            name: this.$store.state.name,
+          });
           console.log(
             this.course_id,
             this.course_date,
@@ -171,7 +175,7 @@ export default {
             this.$store.state.ID
           );
           this.btnText = "取消預訂";
-          console.log(this.seatDetails);
+          this.canBook = false;
         }
       }
     },
@@ -183,6 +187,14 @@ export default {
       } else if (this.seatDetails[seat_id].status == 1) {
         this.showHover = true;
         this.hoverInfo = "可預約";
+      } else if (this.seatDetails[seat_id].status == 2) {
+        if (
+          this.seatDetails[seat_id].info.reserved_by == this.$store.state.ID
+        ) {
+          this.hoverInfo = "你的座位";
+        } else {
+          this.hoverInfo = "目前選擇";
+        }
       }
       var showDiv = document.getElementById("hoverBox");
       showDiv.style.left = event.pageX - 100 + "px";
@@ -235,7 +247,7 @@ export default {
       position: absolute;
       z-index: 999;
       min-width: 4em;
-      max-width: 4em;
+      padding: 0.3em;
       height: 2em;
       border-radius: 0.2em;
       background-color: #ffffff;
