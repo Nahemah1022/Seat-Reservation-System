@@ -42,6 +42,8 @@ def bookSeat(seat: seatSchema.dbSeat ,conn:Session = Depends(getDBSession)):
         raise HTTPException(status_code = 400, detail = "Invalid Reservation")
 
     sameSeat = conn.execute(t_Seat.select().where(
+        t_Seat.c.course_id == seat.course_id,
+        t_Seat.c.course_date == seat.course_date,
         t_Seat.c.seat_id == seat.seat_id
     )).first()
     if sameSeat :
