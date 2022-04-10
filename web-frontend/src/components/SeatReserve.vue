@@ -52,7 +52,6 @@ export default {
   },
   data() {
     return {
-      isLogin: false,
       courseData: [],
       seatDetails: [],
       legend: [
@@ -223,8 +222,10 @@ export default {
     text-align: center;
   }
   .seat-table {
+    flex: none;
     width: 85%;
-    height: 70%;
+    height: 30%;
+    overflow-y: hidden;
     display: flex;
     flex-wrap: wrap;
     margin: 5% 10%;

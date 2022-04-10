@@ -85,8 +85,8 @@ export default {
   name: "Function_Bar",
   data() {
     return {
-      LessonName: "請選擇課程名稱:",
-      LessonTime: "請選擇課程日期:",
+      LessonName: "請選擇課程名稱：",
+      LessonTime: "請選擇課程日期：",
       Is_SignUp: false,
       CourseSelect: false,
       TimeSelect: false,
@@ -129,7 +129,7 @@ export default {
       var i = "";
       var n = "";
       this.$store.commit("setUserInformation", { i, n });
-      this.Is_ChooseCourse = false;
+      this.Refresh();
     },
     async ShowLesson() {
       const response = await fetch("/course/getAllCourse");
@@ -173,10 +173,11 @@ export default {
       this.course = { course_id: this.LessonId, date: this.LessonTime };
       this.Is_ChooseCourse = true;
       this.$refs.SeatTable.getSeats(this.course);
-      console.log(this.course);
     },
     Refresh() {
       this.Is_ChooseCourse = false;
+      this.LessonName = "請選擇課程名稱：";
+      this.LessonTime = "請選擇課程日期：";
     },
   },
   components: {
