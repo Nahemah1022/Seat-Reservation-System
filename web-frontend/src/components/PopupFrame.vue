@@ -1,10 +1,6 @@
 <template>
-  <div>
-    <form action="">
-      <div class="sign-up-pop">
-        <slot></slot>
-      </div>
-    </form>
+  <div class="sign-up-pop">
+    <slot></slot>
   </div>
 </template>
 
@@ -32,6 +28,7 @@ export default {
   border-style: solid;
   border-width: 1px;
   border-color: #c4c4c4;
+  background-color: white;
   font-family: "微軟正黑體";
 }
 </style>

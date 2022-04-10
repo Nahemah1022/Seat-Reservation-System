@@ -1,0 +1,12 @@
+.env
+build
+*.pem
+*.key
+*.crt
+*.log
+/dist
+/.idea
+**/.git
+**/.gitignore
+**/.DS_Store
+**/node_modules
