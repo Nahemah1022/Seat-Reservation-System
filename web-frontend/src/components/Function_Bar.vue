@@ -120,6 +120,7 @@ export default {
     Sign() {
       this.$store.commit("setLogin", true);
       this.Is_SignUp = false;
+      this.Refresh();
     },
     Sign_up() {
       this.$store.commit("setLogin", true);

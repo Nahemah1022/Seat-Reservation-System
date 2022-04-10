@@ -77,6 +77,9 @@ export default {
       getCourse(course.course_id, course.date).then((res) => {
         if (res.status == 200) {
           this.courseData = res.data.data;
+          console.log(this.courseData);
+          let margin = 32 / this.courseData.numberPerRow;
+          document.documentElement.style.setProperty(`--space`, margin + "%");
           let i;
           for (i = 0; i < this.courseData.totalSeat; i++) {
             this.seatDetails.push({
@@ -141,6 +144,7 @@ export default {
     finishChoose() {
       if (this.$store.state.ID == "") {
         this.$store.commit("setLogin", true);
+        // this.getSeats({ course_id: this.course_id, date: this.course_date });
         this.$emit("update");
       } else {
         if (this.canBook == false) {
@@ -167,12 +171,6 @@ export default {
             reserved: this.$store.state.ID,
             name: this.$store.state.name,
           });
-          console.log(
-            this.course_id,
-            this.course_date,
-            this.selectedSeat,
-            this.$store.state.ID
-          );
           this.btnText = "取消預訂";
           this.canBook = false;
         }
@@ -196,8 +194,8 @@ export default {
         }
       }
       var showDiv = document.getElementById("hoverBox");
-      showDiv.style.left = event.pageX - 100 + "px";
-      showDiv.style.top = event.pageY - 200 + "px";
+      showDiv.style.left = event.pageX - 200 + "px";
+      showDiv.style.top = event.pageY - 300 + "px";
       showDiv.style.display = "block";
     },
     leaveSeat() {
@@ -207,6 +205,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+:root {
+  --space: 1em;
+}
 .container {
   width: 100%;
   display: flex;
@@ -222,16 +223,21 @@ export default {
     text-align: center;
   }
   .seat-table {
+    position: absolute;
     flex: none;
     width: 85%;
-    height: 30%;
-    overflow-y: hidden;
+    height: 70%;
+    overflow: auto;
     display: flex;
     flex-wrap: wrap;
     margin: 5% 10%;
+    justify-content: space-between;
     .seats {
+      flex: none;
       position: relative;
-      margin: 1.7%;
+      margin: 1em var(--space);
+      height: 1em;
+      width: 1em;
       padding: 2%;
       border-radius: 0.2em;
       .status0 {
@@ -267,7 +273,7 @@ export default {
     position: absolute;
     bottom: 0%;
     width: 100%;
-    z-index: 99;
+    z-index: 9;
     display: flex;
     align-items: center;
     .legend-box {
