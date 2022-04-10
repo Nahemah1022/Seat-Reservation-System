@@ -194,7 +194,20 @@ export default {
         }
       }
       var showDiv = document.getElementById("hoverBox");
-      showDiv.style.left = event.pageX - 200 + "px";
+      // var seatBox = document.getElementsByClassName("seat-table");
+
+      // let overW = seatBox.getBoundingClientRect().width;
+      // let overH = seatBox.getBoundingClientRect().height;
+      // let overs = {
+      //   x: seatBox.scrollWidth - seatBox.clientWidth,
+      //   y: seatBox.scrollHeight - seatBox.clientHeight,
+      // };
+      // let x = window.pageXOffset + event.clientX - this.offsetLeft;
+      // let y = window.pageYOffset + event.clientY - this.offsetTop;
+      // seatBox.scrollLeft = (x / overW) * overs.x;
+      // seatBox.scrollTop = (y / overH) * overs.y;
+
+      showDiv.style.left = event.pageX - 150 + "px";
       showDiv.style.top = event.pageY - 300 + "px";
       showDiv.style.display = "block";
     },
@@ -225,12 +238,12 @@ export default {
   .seat-table {
     position: absolute;
     flex: none;
-    width: 85%;
+    width: 90%;
     height: 70%;
     overflow: auto;
     display: flex;
     flex-wrap: wrap;
-    margin: 5% 10%;
+    margin: 6% 10%;
     justify-content: space-between;
     .seats {
       flex: none;
@@ -252,7 +265,7 @@ export default {
     }
     #hoverBox {
       position: absolute;
-      z-index: 999;
+      z-index: 9999;
       min-width: 4em;
       padding: 0.3em;
       height: 2em;
