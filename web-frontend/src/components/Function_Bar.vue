@@ -90,26 +90,7 @@ export default {
       Is_SignUp: false,
       CourseSelect: false,
       TimeSelect: false,
-      CourseList: [
-        {
-          id: "ALGO",
-          name: "演算法",
-          classroom: "65405",
-          date: ["2022-04-01", "2022-04-08"],
-        },
-        {
-          id: "NASA",
-          name: "計算機網路",
-          classroom: "65304",
-          date: ["2022-04-07"],
-        },
-        {
-          id: "SW",
-          name: "軟體工程",
-          classroom: "4201",
-          date: ["2022-03-31", "2022-04-05"],
-        },
-      ],
+      CourseList: [],
       DateList: [],
       Is_ChooseCourse: false,
       LessonId: "",
@@ -133,7 +114,9 @@ export default {
       this.Refresh();
     },
     async ShowLesson() {
-      const response = await fetch("/course/getAllCourse");
+      const response = await fetch(
+        "http://140.116.249.231:8000/course/getAllCourse"
+      );
       const res = await response.json();
       var i, j;
       for (j = 0; this.CourseList.length != 0; j++) {
