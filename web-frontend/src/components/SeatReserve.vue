@@ -186,7 +186,7 @@ export default {
         this.hoverInfo = "可預約";
       } else if (this.seatDetails[seat_id].status == 2) {
         if (
-          this.seatDetails[seat_id].info.reserved_by == this.$store.state.ID
+          this.seatDetails[seat_id].info[0].reserved_by == this.$store.state.ID
         ) {
           this.hoverInfo = "你的座位";
         } else {
