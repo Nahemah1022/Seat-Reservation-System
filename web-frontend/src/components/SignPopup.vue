@@ -80,6 +80,7 @@
 
 <script>
 import PopupFrame from "./PopupFrame.vue";
+// import { createStudent } from "@/api";
 export default {
   name: "SignPopup",
   props: {
@@ -137,7 +138,10 @@ export default {
             password: this.Password,
           }),
         };
-        const response = await fetch("/users/register", requestOptions);
+        const response = await fetch(
+          "http://140.116.249.231:8000/users/register",
+          requestOptions
+        );
         const res = await response.json();
         if (res.message == "success") {
           this.Alarm_text = "註冊成功";
@@ -172,7 +176,10 @@ export default {
             password: this.Password,
           }),
         };
-        const response = await fetch("/users/login", requestOptions);
+        const response = await fetch(
+          "http://140.116.249.231:8000/users/login",
+          requestOptions
+        );
         const res = await response.json();
         if (res.message == "success") {
           this.Alarm_text = "登入成功";

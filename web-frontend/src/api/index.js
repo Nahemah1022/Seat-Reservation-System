@@ -11,9 +11,11 @@ export function createStudent(id, name, password) {
   return request({
     url: "/users/register",
     method: "POST",
-    id: id,
-    name: name,
-    password: password,
+    data: {
+      id: id,
+      name: name,
+      password: password,
+    },
   });
 }
 
@@ -21,8 +23,10 @@ export function loginStudent(id, password) {
   return request({
     url: "/users/login",
     method: "POST",
-    id: id,
-    password: password,
+    data: {
+      id: id,
+      password: password,
+    },
   });
 }
 
@@ -46,11 +50,13 @@ export function addCourse(id, date, name, classroom, seats, cols) {
     url: "/addCourse",
     method: "POST",
     id: id,
-    date: date,
-    name: name,
-    classroom: classroom,
-    seats: seats,
-    cols: cols,
+    data: {
+      date: date,
+      name: name,
+      classroom: classroom,
+      seats: seats,
+      cols: cols,
+    },
   });
 }
 
