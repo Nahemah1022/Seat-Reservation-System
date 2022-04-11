@@ -162,6 +162,10 @@ export default {
       this.Is_ChooseCourse = false;
       this.LessonName = "請選擇課程名稱：";
       this.LessonTime = "請選擇課程日期：";
+      var k;
+      for (k = 0; this.DateList.length != 0; k++) {
+        this.DateList.pop();
+      }
     },
   },
   components: {
