@@ -17,6 +17,6 @@ jobs:
         port: 22
         script: |
           cd /home/srs/Seat-Reservation-System
-          git pull origin master
+          git pull
           docker-compose build frontend
           docker-compose up -d frontend
